@@ -38,7 +38,8 @@ export class SettingsPanel extends UIPanel {
 		const themeRow = new UIRow();
 		const theme = new UISelect().setOptions({
 			light: strings.get("sidebar/settings/theme/items")[0],
-			dark: strings.get("sidebar/settings/theme/items")[1]
+			dark: strings.get("sidebar/settings/theme/items")[1],
+			eyecare: strings.get("sidebar/settings/theme/items")[2]
 		});
 		theme.dom.onchange = (e) => {
 			reader.emit("themechanged", e.target.value);
