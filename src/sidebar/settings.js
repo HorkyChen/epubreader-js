@@ -48,6 +48,24 @@ export class SettingsPanel extends UIPanel {
 		themeRow.add(themeLabel);
 		themeRow.add(theme);
 
+		const fontLabel = new UILabel(strings.get("sidebar/settings/font"), "font");
+		const fontRow = new UIRow();
+		const font = new UISelect().setOptions({
+			"default": strings.get("sidebar/settings/font/default"),
+			"Huiwen-HKHei": "汇文港黑",
+			"Huiwen-Fangsong": "汇文仿宋体",
+			"Huiwen-MinchoGBK": "汇文明朝体",
+			"AMCSongGBK-Light": "行书",
+			"FZSongKeBenXiuKaiS-R-GB": "方正宋刻本秀楷",
+			"Bookerly": "Bookerly",
+		});
+		font.dom.onchange = (e) => {
+			reader.emit("fontchanged", e.target.value);
+		};
+		font.setId("font");
+		fontRow.add(fontLabel);
+		fontRow.add(font);
+
 		const fontSizeLabel = new UILabel(strings.get(keys[2]), "fontsize");
 		const fontSizeRow = new UIRow();
 		const fontSize = new UINumber(100, 1);
@@ -144,6 +162,7 @@ export class SettingsPanel extends UIPanel {
 		this.add(new UIBox([
 			languageRow,
 			themeRow,
+			fontRow,
 			fontSizeRow,
 			flowRow,
 			spreadRow,
@@ -157,6 +176,7 @@ export class SettingsPanel extends UIPanel {
 
 			language.setValue(cfg.language);
 			theme.setValue(cfg.theme);
+			font.setValue(cfg.styles.font);
 			fontSize.setValue(cfg.styles.fontSize);
 			flow.setValue(cfg.flow);
 			spread.setValue(cfg.spread.mod);
@@ -182,7 +202,7 @@ export class SettingsPanel extends UIPanel {
 
 			headerLabel.setTextContent(strings.get(keys[0]));
 			languageLabel.setTextContent(strings.get(keys[1]));
-
+			fontLabel.setTextContent(strings.get("sidebar/settings/font"));
 			fontSizeLabel.setTextContent(strings.get(keys[2]));
 			flowLabel.setTextContent(strings.get(keys[3]));
 			const flowModeStr = strings.get("sidebar/settings/pagination");

@@ -29,6 +29,8 @@ export class Strings {
 				"sidebar/search/placeholder": "Search",
 				"sidebar/settings": "Settings",
 				"sidebar/settings/language": "Language",
+				"sidebar/settings/font": "Font",
+				"sidebar/settings/font/default": "Default",
 				"sidebar/settings/fontsize": "Font size (%)",
 				"sidebar/settings/flow": "Flow",
 				"sidebar/settings/pagination": ["Pagination", "Generate pagination"],
@@ -81,6 +83,8 @@ export class Strings {
 				"sidebar/search/placeholder": "搜索",
 				"sidebar/settings": "设置",
 				"sidebar/settings/language": "语言",
+				"sidebar/settings/font": "字体",
+				"sidebar/settings/font/default": "默认字体",
 				"sidebar/settings/fontsize": "字体大小 (%)",
 				"sidebar/settings/flow": "换页", // Scrolled = "滚动模式"
 				"sidebar/settings/pagination": ["分页模式", "滚动模式"],

@@ -178,6 +178,14 @@ export class Reader {
 				this.rendition.spread(this.settings.spread.mod, spread.min);
 			}
 		});
+
+		this.on("fontchanged", (font) => {
+			if (font === "default") {
+				font = "";
+			}
+			this.settings.styles.font = font;
+			this.rendition.themes.font(font);
+		});
 	}
 
 	/* ------------------------------- Common ------------------------------- */
@@ -311,6 +319,7 @@ export class Reader {
 			openbook: this.storage.indexedDB ? true : false,
 			language: "zh",
 			theme: "light",
+			font: "default",
 			sectionId: undefined,
 			bookmarks: [],   // array | false
 			annotations: [], // array | false
