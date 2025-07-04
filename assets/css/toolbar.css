@@ -32,13 +32,13 @@
 /* Dark Theme Styles */
 .dark-theme #toolbar {
     background-color: #2d2d2d;
-    border-bottom: 1px solid #555;
+    border-bottom: 0px solid #555;
 }
 
 /* Eye Care Theme Styles */
 .eyecare-theme #toolbar {
     background-color: #e8f5e8;
-    border-bottom: 1px solid #b8d4b8;
+    border-bottom: 0px solid #b8d4b8;
 }
 
 /**

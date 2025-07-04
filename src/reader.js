@@ -167,6 +167,7 @@ export class Reader {
 		});
 
 		this.on("spreadchanged", (spread) => {
+			console.log("Spread changed:", spread);
 			if (spread.mod !== undefined) {
 				this.settings.spread.mod = spread.mod;
 			}

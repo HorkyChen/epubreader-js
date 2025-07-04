@@ -424,7 +424,7 @@
     background-color: transparent !important;
 }
 
-#sidebar .panel li.selected {
+.dark-theme #sidebar .panel li.selected {
 	margin-left: 0px;
 	border-left: 2px solid #1A73E8 !important;
 	background-color: #00373f !important;
@@ -435,7 +435,7 @@
     color: #fff !important;
 }
 
-#sidebar .panel li:hover {
+.dark-theme #sidebar .panel li:hover {
 	background-color: #00373f !important;
 }
 
