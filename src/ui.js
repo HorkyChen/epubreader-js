@@ -9,10 +9,10 @@ const ERROR_MSG = "is not an instance of UIElement.";
  * @param {string} tag
  */
 export class UIElement {
-	
+
 	constructor(tag) {
 
-		this.dom = document.createElement(tag); 
+		this.dom = document.createElement(tag);
 	}
 
 	add() {

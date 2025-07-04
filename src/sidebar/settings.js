@@ -22,11 +22,9 @@ export class SettingsPanel extends UIPanel {
 		const languageLabel = new UILabel(strings.get(keys[1]), "language-ui");
 		const languageRow = new UIRow();
 		const language = new UISelect().setOptions({
+			zh: "中文",
 			en: "English",
-			fr: "French",
-			ja: "Japanese",
-			ru: "Russian",
-			zh: "Chinese"
+			ja: "Japanese"
 		});
 		language.dom.onchange = (e) => {
 
@@ -53,9 +51,11 @@ export class SettingsPanel extends UIPanel {
 
 		const flowLabel = new UILabel(strings.get(keys[3]), "flow");
 		const flowRow = new UIRow();
+
+		const flowModeStr = strings.get("sidebar/settings/pagination");
 		const flow = new UISelect().setOptions({
-			paginated: "Paginated",
-			scrolled: "Scrolled"
+			paginated: flowModeStr[0],
+			scrolled: flowModeStr[1]
 		});
 		flow.dom.onchange = (e) => {
 
@@ -82,9 +82,10 @@ export class SettingsPanel extends UIPanel {
 		const minSpreadWidth = new UINumber(800, 1);
 		const spreadLabel = new UILabel(strings.get(keys[4]), "spread");
 		const spreadRow = new UIRow();
+		const spreadValues = strings.get("sidebar/settings/spread/items");
 		const spread = new UISelect().setOptions({
-			none: "None",
-			auto: "Auto"
+			none: spreadValues[0],
+			auto: spreadValues[1]
 		});
 		spread.dom.onchange = (e) => {
 
@@ -164,7 +165,17 @@ export class SettingsPanel extends UIPanel {
 			languageLabel.setTextContent(strings.get(keys[1]));
 			fontSizeLabel.setTextContent(strings.get(keys[2]));
 			flowLabel.setTextContent(strings.get(keys[3]));
+			const flowModeStr = strings.get("sidebar/settings/pagination");
+			flow.setOptions({
+				paginated: flowModeStr[0],
+				scrolled: flowModeStr[1]
+			});
 			spreadLabel.setTextContent(strings.get(keys[4]));
+			const spreadValues = strings.get("sidebar/settings/spread/items");
+			spread = new UISelect().setOptions({
+				none: spreadValues[0],
+				auto: spreadValues[1]
+			});
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
 		});
 	}
