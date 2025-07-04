@@ -167,12 +167,15 @@ export class Reader {
 		});
 
 		this.on("spreadchanged", (spread) => {
-			console.log("Spread changed:", spread);
 			if (spread.mod !== undefined) {
 				this.settings.spread.mod = spread.mod;
+				// Apply spread mode change to rendition
+				this.rendition.spread(spread.mod, this.settings.spread.min);
 			}
 			if (spread.min !== undefined) {
 				this.settings.spread.min = spread.min;
+				// Apply minimum spread width change to rendition
+				this.rendition.spread(this.settings.spread.mod, spread.min);
 			}
 		});
 	}
