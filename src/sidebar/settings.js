@@ -14,7 +14,8 @@ export class SettingsPanel extends UIPanel {
 			"sidebar/settings/fontsize",
 			"sidebar/settings/flow",
 			"sidebar/settings/spread",
-			"sidebar/settings/spread/minwidth"
+			"sidebar/settings/spread/minwidth",
+			"sidebar/settings/theme",
 		];
 		const headerLabel = new UIText(strings.get(keys[0])).setClass("label");
 		this.add(new UIBox(headerLabel).addClass("header"));
@@ -180,6 +181,7 @@ export class SettingsPanel extends UIPanel {
 
 			headerLabel.setTextContent(strings.get(keys[0]));
 			languageLabel.setTextContent(strings.get(keys[1]));
+
 			fontSizeLabel.setTextContent(strings.get(keys[2]));
 			flowLabel.setTextContent(strings.get(keys[3]));
 			const flowModeStr = strings.get("sidebar/settings/pagination");
@@ -189,11 +191,17 @@ export class SettingsPanel extends UIPanel {
 			});
 			spreadLabel.setTextContent(strings.get(keys[4]));
 			const spreadValues = strings.get("sidebar/settings/spread/items");
-			spread = new UISelect().setOptions({
+			spread.setOptions({
 				none: spreadValues[0],
 				auto: spreadValues[1]
 			});
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
+			themeLabel.setTextContent(strings.get(keys[6]));
+			const themeLabel = new UILabel(strings.get("sidebar/settings/theme"), "theme");
+			theme.setOptions({
+				light: strings.get("sidebar/settings/theme/items")[0],
+				dark: strings.get("sidebar/settings/theme/items")[1]
+			});
 		});
 	}
 }
