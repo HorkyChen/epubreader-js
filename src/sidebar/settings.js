@@ -60,7 +60,9 @@ export class SettingsPanel extends UIPanel {
 			"Bookerly": "Bookerly",
 		});
 		font.dom.onchange = (e) => {
-			reader.emit("fontchanged", e.target.value);
+			reader.emit("styleschanged", {
+				font: e.target.value
+			});
 		};
 		font.setId("font");
 		fontRow.add(fontLabel);
@@ -177,12 +179,16 @@ export class SettingsPanel extends UIPanel {
 			language.setValue(cfg.language);
 			theme.setValue(cfg.theme);
 			font.setValue(cfg.styles.font);
+			if (!cfg.styles.font) {
+				font.setValue("default");
+			}
 			fontSize.setValue(cfg.styles.fontSize);
 			flow.setValue(cfg.flow);
 			spread.setValue(cfg.spread.mod);
 			minSpreadWidth.setValue(cfg.spread.min);
 			minSpreadWidth.dom.disabled = cfg.spread.mod === "none";
 			reader.emit("styleschanged", {
+				font: cfg.styles.font,
 				fontSize: cfg.styles.fontSize
 			});
 		});

@@ -148,9 +148,22 @@ export class Reader {
 		});
 
 		this.on("styleschanged", (value) => {
-			const fontSize = value.fontSize;
-			this.settings.styles.fontSize = fontSize;
-			this.rendition.themes.fontSize(fontSize + "%");
+			if (!value) {
+				return;
+			}
+			if (value.fontSize !== undefined) {
+				const fontSize = value.fontSize;
+				this.settings.styles.fontSize = fontSize;
+				this.rendition.themes.fontSize(fontSize + "%");
+			}
+			if (value.font !== undefined) {
+				let font = value.font;
+				if (font === "default") {
+					font = "";
+				}
+				this.settings.styles.font = font;
+				this.rendition.themes.font(font);
+			}
 		});
 
 		this.on("themechanged", (theme) => {
@@ -178,14 +191,6 @@ export class Reader {
 				this.rendition.spread(this.settings.spread.mod, spread.min);
 			}
 		});
-
-		this.on("fontchanged", (font) => {
-			if (font === "default") {
-				font = "";
-			}
-			this.settings.styles.font = font;
-			this.rendition.themes.font(font);
-		});
 	}
 
 	/* ------------------------------- Common ------------------------------- */
@@ -209,19 +214,19 @@ export class Reader {
 				contentStyles = {
 					"body": {
 						"background": "#1a1a1a",
-						"color": "#e0e0e0"
+						"color": "#e0e0e0 !important"
 					},
 					"p": {
-						"color": "#e0e0e0"
+						"color": "#e0e0e0 !important"
 					},
 					"h1, h2, h3, h4, h5, h6": {
-						"color": "#e0e0e0"
+						"color": "#e0e0e0 !important",
 					},
 					"a": {
-						"color": "#4a9eff"
+						"color": "#4a9eff !important"
 					},
 					"a:visited": {
-						"color": "#b19cd9"
+						"color": "#b19cd9 !important"
 					}
 				};
 			} else if (theme === "eyecare") {
@@ -319,7 +324,6 @@ export class Reader {
 			openbook: this.storage.indexedDB ? true : false,
 			language: "zh",
 			theme: "light",
-			font: "default",
 			sectionId: undefined,
 			bookmarks: [],   // array | false
 			annotations: [], // array | false
@@ -329,6 +333,7 @@ export class Reader {
 				min: 800
 			},
 			styles: {
+				font: "default",
 				fontSize: 100
 			},
 			pagination: undefined, // not implemented
