@@ -138,6 +138,51 @@ body {
 	background-position: center;
 }
 
+/* Dark Theme Styles */
+.dark-theme {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.dark-theme #content {
+    background: #1a1a1a;
+}
+
+.dark-theme #sidebar,
+.dark-theme #notedlg {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dark-theme .arrow span {
+    color: #666;
+}
+
+.dark-theme .arrow span:hover {
+    color: #999;
+}
+
+.dark-theme .arrow:active > span,
+.dark-theme .arrow.active > span {
+    color: #fff;
+}
+
+.dark-theme #divider {
+    border-left-color: #555;
+}
+
+.dark-theme #overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+@media
+only screen and (max-width: 320px) and (orientation: portrait),
+only screen and (max-width: 568px) and (orientation: landscape) {
+    .dark-theme .arrow span {
+        color: #666;
+    }
+}
+
 /**
  * iPhone 5 : 320 x 568
  */

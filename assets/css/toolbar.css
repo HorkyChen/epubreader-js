@@ -29,6 +29,12 @@
 	display: none;
 }
 
+/* Dark Theme Styles */
+.dark-theme #toolbar {
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #555;
+}
+
 /**
  * iPhone 5 : 320 x 568
  */

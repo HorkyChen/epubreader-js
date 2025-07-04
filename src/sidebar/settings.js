@@ -176,14 +176,6 @@ export class SettingsPanel extends UIPanel {
 			}
 		});
 
-		reader.on("themechanged", (theme) => {
-			if (theme === "dark") {
-				document.body.classList.add("dark-theme");
-			} else {
-				document.body.classList.remove("dark-theme");
-			}
-		});
-
 		reader.on("languagechanged", (value) => {
 
 			headerLabel.setTextContent(strings.get(keys[0]));

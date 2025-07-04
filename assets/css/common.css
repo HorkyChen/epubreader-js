@@ -103,6 +103,25 @@
 	background-image: url("../img/info.svg");
 }
 
+/* Dark Theme Styles */
+.dark-theme #sidebar,
+.dark-theme #notedlg {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dark-theme [id^="btn-"].box input:hover {
+    background-color: #404040;
+}
+
+.dark-theme [id^="btn-"].box.selected input {
+    background-color: #404040;
+}
+
+.dark-theme .box {
+    border-color: #555;
+}
+
 /**
  * iPhone 5 : 320 x 568
  */

@@ -60,6 +60,34 @@
     background-color: #BDC3C7 !important;
 }
 
+/* Dark Theme Styles */
+.dark-theme #notedlg {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dark-theme #notedlg .box label {
+    color: #e0e0e0;
+}
+
+.dark-theme #notedlg .box input[type="text"] {
+    background-color: #404040;
+    color: #e0e0e0;
+    border-color: #555;
+}
+
+.dark-theme #notedlg .box input[type="button"] {
+    background-color: #0d5aa7 !important;
+}
+
+.dark-theme #notedlg .box input[type="button"]:hover {
+    background-color: #1a73e8 !important;
+}
+
+.dark-theme #notedlg .box input[type="button"]:disabled {
+    background-color: #555 !important;
+}
+
 /**
  * iPhone 5 : 320 x 568
  */
@@ -69,11 +97,11 @@
     #notedlg {
         height: 52px;
     }
-    
+
     #notedlg .box {
         min-width: 320px;
     }
-    
+
     #notedlg .box.control {
         grid-template: 30px / 80px 160px 80px;
     }

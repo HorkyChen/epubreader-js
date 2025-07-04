@@ -22,6 +22,8 @@ export class Reader {
 				path = data;
 			}
 			this.cfgInit(path, settings);
+			// Apply initial theme to UI
+			this.applyTheme(this.settings.theme);
 			this.strings = new Strings(this);
 			this.toolbar = new Toolbar(this);
 			this.content = new Content(this);
@@ -92,6 +94,8 @@ export class Reader {
 
 		this.book.ready.then(() => {
 			this.emit("bookready", this.settings);
+			// Apply theme after book is ready
+			this.applyTheme(this.settings.theme);
 		}).then(() => {
 			this.emit("bookloaded");
 		});
@@ -143,31 +147,67 @@ export class Reader {
 			}
 		});
 
-		this.on("languagechanged", (value) => {
-			this.settings.language = value;
-		});
-
-		this.on("flowchanged", (value) => {
-			this.settings.flow = value;
-			this.rendition.flow(value);
-		});
-
-		this.on("spreadchanged", (value) => {
-			const mod = value.mod || this.settings.spread.mod;
-			const min = value.min || this.settings.spread.min;
-			this.settings.spread.mod = mod;
-			this.settings.spread.min = min;
-			this.rendition.spread(mod, min);
-		});
-
 		this.on("styleschanged", (value) => {
 			const fontSize = value.fontSize;
 			this.settings.styles.fontSize = fontSize;
 			this.rendition.themes.fontSize(fontSize + "%");
 		});
+
+		this.on("themechanged", (theme) => {
+			this.settings.theme = theme;
+			this.applyTheme(theme);
+		});
+
+		this.on("languagechanged", (language) => {
+			this.settings.language = language;
+		});
+
+		this.on("flowchanged", (flow) => {
+			this.settings.flow = flow;
+		});
+
+		this.on("spreadchanged", (spread) => {
+			if (spread.mod !== undefined) {
+				this.settings.spread.mod = spread.mod;
+			}
+			if (spread.min !== undefined) {
+				this.settings.spread.min = spread.min;
+			}
+		});
 	}
 
 	/* ------------------------------- Common ------------------------------- */
+
+	applyTheme(theme) {
+		// Apply theme to the UI
+		if (theme === "dark") {
+			document.body.classList.add("dark-theme");
+		} else {
+			document.body.classList.remove("dark-theme");
+		}
+
+		// Apply theme to the epub content (only if rendition is available)
+		if (this.rendition) {
+			this.rendition.themes.default({
+				"body": {
+					"background": theme === "dark" ? "#1a1a1a" : "#fff",
+					"color": theme === "dark" ? "#e0e0e0" : "#000"
+				},
+				"p": {
+					"color": theme === "dark" ? "#e0e0e0" : "#000"
+				},
+				"h1, h2, h3, h4, h5, h6": {
+					"color": theme === "dark" ? "#e0e0e0" : "#000"
+				},
+				"a": {
+					"color": theme === "dark" ? "#4a9eff" : "#1a73e8"
+				},
+				"a:visited": {
+					"color": theme === "dark" ? "#b19cd9" : "#8e24aa"
+				}
+			});
+		}
+	}
 
 	navItemFromCfi(cfi) {
 

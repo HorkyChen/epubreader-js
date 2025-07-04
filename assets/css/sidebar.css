@@ -338,6 +338,79 @@
 	text-align: left;
 }
 
+/* Dark Theme Styles */
+.dark-theme #sidebar {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.dark-theme #sidebar .menu {
+    border-bottom-color: #555;
+}
+
+.dark-theme #sidebar .panel .box.header span.label {
+    color: #e0e0e0;
+}
+
+.dark-theme #sidebar .panel input[type=button] {
+    background-color: #0d5aa7 !important;
+}
+
+.dark-theme #sidebar .panel input[type=button]:hover {
+    background-color: #1a73e8 !important;
+}
+
+.dark-theme #sidebar .panel input[type=button]:disabled {
+    background-color: #555 !important;
+}
+
+.dark-theme #sidebar .panel .box.row {
+    background-color: #404040 !important;
+}
+
+.dark-theme #sidebar .panel .box.row:hover {
+    background-color: #4a4a4a !important;
+}
+
+.dark-theme #sidebar .panel .box.row .text {
+    color: #e0e0e0 !important;
+}
+
+.dark-theme #sidebar .panel .box.row .subtext {
+    color: #999 !important;
+}
+
+.dark-theme #sidebar .panel .box.row .note {
+    color: #ccc !important;
+}
+
+.dark-theme #sidebar .panel input[type=text],
+.dark-theme #sidebar .panel input[type=number],
+.dark-theme #sidebar .panel select {
+    background-color: #404040 !important;
+    color: #e0e0e0 !important;
+    border-color: #555 !important;
+}
+
+.dark-theme #sidebar .panel input[type=text]:focus,
+.dark-theme #sidebar .panel input[type=number]:focus,
+.dark-theme #sidebar .panel select:focus {
+    outline-color: #1a73e8 !important;
+}
+
+.dark-theme #sidebar .panel option {
+    background-color: #404040;
+    color: #e0e0e0;
+}
+
+@media
+only screen and (width: 430px) and (orientation: portrait),
+only screen and (height: 430px) and (orientation: landscape) {
+    .dark-theme #sidebar {
+        background-color: #2d2d2d;
+    }
+}
+
 /**
  * iPhone 5     : 320 x 568
  * iPhone 6/7/8 : 375 x 667
