@@ -171,8 +171,8 @@ export class Reader {
 
 	navItemFromCfi(cfi) {
 
-		// This feature was added to solve the problem of duplicate titles in 
-		// bookmarks. But this still has no solution because when reloading the 
+		// This feature was added to solve the problem of duplicate titles in
+		// bookmarks. But this still has no solution because when reloading the
 		// reader, rendition cannot get the range from the previously saved CFI.
 		const range = this.rendition.getRange(cfi);
 		const idref = range ? range.startContainer.parentNode.id : undefined;
@@ -217,7 +217,8 @@ export class Reader {
 			restore: true,
 			history: true,
 			openbook: this.storage.indexedDB ? true : false,
-			language: "en",
+			language: "zh",
+			theme: "light",
 			sectionId: undefined,
 			bookmarks: [],   // array | false
 			annotations: [], // array | false

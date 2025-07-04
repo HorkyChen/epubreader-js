@@ -23,8 +23,7 @@ export class SettingsPanel extends UIPanel {
 		const languageRow = new UIRow();
 		const language = new UISelect().setOptions({
 			zh: "中文",
-			en: "English",
-			ja: "Japanese"
+			en: "English"
 		});
 		language.dom.onchange = (e) => {
 
@@ -33,6 +32,19 @@ export class SettingsPanel extends UIPanel {
 		language.setId("language-ui");
 		languageRow.add(languageLabel);
 		languageRow.add(language);
+
+		const themeLabel = new UILabel(strings.get("sidebar/settings/theme"), "theme");
+		const themeRow = new UIRow();
+		const theme = new UISelect().setOptions({
+			light: strings.get("sidebar/settings/theme/items")[0],
+			dark: strings.get("sidebar/settings/theme/items")[1]
+		});
+		theme.dom.onchange = (e) => {
+			reader.emit("themechanged", e.target.value);
+		};
+		theme.setId("theme");
+		themeRow.add(themeLabel);
+		themeRow.add(theme);
 
 		const fontSizeLabel = new UILabel(strings.get(keys[2]), "fontsize");
 		const fontSizeRow = new UIRow();
@@ -129,6 +141,7 @@ export class SettingsPanel extends UIPanel {
 
 		this.add(new UIBox([
 			languageRow,
+			themeRow,
 			fontSizeRow,
 			flowRow,
 			spreadRow,
@@ -141,11 +154,15 @@ export class SettingsPanel extends UIPanel {
 		reader.on("bookready", (cfg) => {
 
 			language.setValue(cfg.language);
+			theme.setValue(cfg.theme);
 			fontSize.setValue(cfg.styles.fontSize);
 			flow.setValue(cfg.flow);
 			spread.setValue(cfg.spread.mod);
 			minSpreadWidth.setValue(cfg.spread.min);
 			minSpreadWidth.dom.disabled = cfg.spread.mod === "none";
+			reader.emit("styleschanged", {
+				fontSize: cfg.styles.fontSize
+			});
 		});
 
 		reader.on("layout", (props) => {
@@ -156,6 +173,14 @@ export class SettingsPanel extends UIPanel {
 				minSpreadWidth.dom.disabled = true;
 			} else {
 				spread.dom.disabled = false;
+			}
+		});
+
+		reader.on("themechanged", (theme) => {
+			if (theme === "dark") {
+				document.body.classList.add("dark-theme");
+			} else {
+				document.body.classList.remove("dark-theme");
 			}
 		});
 
