@@ -53,7 +53,17 @@ export class NoteDlg {
             this.range = contents.range(cfi);
             this.update();
             container.setClass("open");
-            textBox.setValue("");
+
+            try {
+                const selectedText = this.range.toString().trim();
+                const defaultText = selectedText.length > 20 ?
+                    selectedText.substring(0, 20) + "..." :
+                    selectedText;
+                textBox.setValue(defaultText);
+            } catch (error) {
+                console.warn("Could not get selected text:", error);
+                textBox.setValue("");
+            }
         });
 
         reader.on("unselected", () => {
