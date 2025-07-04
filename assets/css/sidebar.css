@@ -127,7 +127,7 @@
 #sidebar .panel li.selected {
 	margin-left: 0px;
 	border-left: 2px solid #1A73E8 !important;
-	background-color: #00373f !important;
+	background-color: #F2F3F4 !important;
 }
 
 /* Light theme - a tag styles */
@@ -424,13 +424,19 @@
     background-color: transparent !important;
 }
 
+#sidebar .panel li.selected {
+	margin-left: 0px;
+	border-left: 2px solid #1A73E8 !important;
+	background-color: #00373f !important;
+}
+
 /* Dark theme - a tag styles */
 .dark-theme #sidebar .panel li a {
     color: #fff !important;
 }
 
-.dark-theme #sidebar .panel li a:hover {
-    color: #e0e0e0 !important;
+#sidebar .panel li:hover {
+	background-color: #00373f !important;
 }
 
 .dark-theme #sidebar .panel li.selected a {
