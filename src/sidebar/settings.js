@@ -197,11 +197,11 @@ export class SettingsPanel extends UIPanel {
 				auto: spreadValues[1]
 			});
 			minSpreadWidthLabel.setTextContent(strings.get(keys[5]));
-			themeLabel.setTextContent(strings.get(keys[6]));
-			const themeLabel = new UILabel(strings.get("sidebar/settings/theme"), "theme");
+			themeLabel.setTextContent(strings.get("sidebar/settings/theme"));
 			theme.setOptions({
 				light: strings.get("sidebar/settings/theme/items")[0],
-				dark: strings.get("sidebar/settings/theme/items")[1]
+				dark: strings.get("sidebar/settings/theme/items")[1],
+				eyecare: strings.get("sidebar/settings/theme/items")[2]
 			});
 		});
 	}

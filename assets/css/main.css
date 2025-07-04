@@ -175,6 +175,16 @@ body {
     background: rgba(0, 0, 0, 0.7);
 }
 
+/* Eye Care Theme Styles */
+.eyecare-theme {
+    background-color: #f0f4e8;
+    color: #2d4a2d;
+}
+
+.eyecare-theme #content {
+    background: #f0f4e8;
+}
+
 @media
 only screen and (max-width: 320px) and (orientation: portrait),
 only screen and (max-width: 568px) and (orientation: landscape) {

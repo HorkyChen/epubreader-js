@@ -179,33 +179,81 @@ export class Reader {
 	/* ------------------------------- Common ------------------------------- */
 
 	applyTheme(theme) {
+		// Remove all theme classes first
+		document.body.classList.remove("dark-theme", "eyecare-theme");
+
 		// Apply theme to the UI
 		if (theme === "dark") {
 			document.body.classList.add("dark-theme");
-		} else {
-			document.body.classList.remove("dark-theme");
+		} else if (theme === "eyecare") {
+			document.body.classList.add("eyecare-theme");
 		}
 
 		// Apply theme to the epub content (only if rendition is available)
 		if (this.rendition) {
-			this.rendition.themes.default({
-				"body": {
-					"background": theme === "dark" ? "#1a1a1a" : "#fff",
-					"color": theme === "dark" ? "#e0e0e0" : "#000"
-				},
-				"p": {
-					"color": theme === "dark" ? "#e0e0e0" : "#000"
-				},
-				"h1, h2, h3, h4, h5, h6": {
-					"color": theme === "dark" ? "#e0e0e0" : "#000"
-				},
-				"a": {
-					"color": theme === "dark" ? "#4a9eff" : "#1a73e8"
-				},
-				"a:visited": {
-					"color": theme === "dark" ? "#b19cd9" : "#8e24aa"
-				}
-			});
+			let contentStyles = {};
+
+			if (theme === "dark") {
+				contentStyles = {
+					"body": {
+						"background": "#1a1a1a",
+						"color": "#e0e0e0"
+					},
+					"p": {
+						"color": "#e0e0e0"
+					},
+					"h1, h2, h3, h4, h5, h6": {
+						"color": "#e0e0e0"
+					},
+					"a": {
+						"color": "#4a9eff"
+					},
+					"a:visited": {
+						"color": "#b19cd9"
+					}
+				};
+			} else if (theme === "eyecare") {
+				contentStyles = {
+					"body": {
+						"background": "#f0f4e8",
+						"color": "#2d4a2d"
+					},
+					"p": {
+						"color": "#2d4a2d"
+					},
+					"h1, h2, h3, h4, h5, h6": {
+						"color": "#2d4a2d"
+					},
+					"a": {
+						"color": "#4a7c4a"
+					},
+					"a:visited": {
+						"color": "#6b8e6b"
+					}
+				};
+			} else {
+				// Light theme
+				contentStyles = {
+					"body": {
+						"background": "#fff",
+						"color": "#000"
+					},
+					"p": {
+						"color": "#000"
+					},
+					"h1, h2, h3, h4, h5, h6": {
+						"color": "#000"
+					},
+					"a": {
+						"color": "#1a73e8"
+					},
+					"a:visited": {
+						"color": "#8e24aa"
+					}
+				};
+			}
+
+			this.rendition.themes.default(contentStyles);
 		}
 	}
 
