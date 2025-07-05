@@ -54,12 +54,10 @@ export class SettingsPanel extends UIPanel {
 			"default": strings.get("sidebar/settings/font/default"),
 			"Huiwen-HKHei": "汇文港黑",
 			"Huiwen-Fangsong": "汇文仿宋体",
-			"Huiwen-MinchoGBK": "汇文明朝体",
-			"AMCSongGBK-Light": "行书",
-			"FZSongKeBenXiuKaiS-R-GB": "方正宋刻本秀楷",
 			"Bookerly": "Bookerly",
 		});
 		font.dom.onchange = (e) => {
+			console.log(`Selected font: ${e.target.value}`);
 			reader.emit("styleschanged", {
 				font: e.target.value
 			});

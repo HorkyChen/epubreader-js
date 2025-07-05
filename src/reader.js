@@ -23,7 +23,7 @@ export class Reader {
 			}
 			this.cfgInit(path, settings);
 			// Apply initial theme to UI
-			this.applyTheme(this.settings.theme);
+			this.applyUITheme(this.settings.theme);
 			this.strings = new Strings(this);
 			this.toolbar = new Toolbar(this);
 			this.content = new Content(this);
@@ -94,8 +94,8 @@ export class Reader {
 
 		this.book.ready.then(() => {
 			this.emit("bookready", this.settings);
-			// Apply theme after book is ready
-			this.applyTheme(this.settings.theme);
+			// Apply styles (theme + font) after book is ready
+			this.applyStyles();
 		}).then(() => {
 			this.emit("bookloaded");
 		});
@@ -162,13 +162,17 @@ export class Reader {
 					font = "";
 				}
 				this.settings.styles.font = font;
-				this.rendition.themes.font(font);
+				// Apply styles with new font
+				this.applyStyles();
 			}
 		});
 
 		this.on("themechanged", (theme) => {
 			this.settings.theme = theme;
-			this.applyTheme(theme);
+			// Apply UI theme
+			this.applyUITheme(theme);
+			// Apply styles with new theme
+			this.applyStyles();
 		});
 
 		this.on("languagechanged", (language) => {
@@ -195,7 +199,67 @@ export class Reader {
 
 	/* ------------------------------- Common ------------------------------- */
 
-	applyTheme(theme) {
+	loadFont(fontName) {
+		if (!fontName || fontName === "default") {
+			return Promise.resolve();
+		}
+
+		// Keep track of loaded fonts
+		if (!this.loadedFonts) {
+			this.loadedFonts = new Set();
+		}
+
+		// Check if we have already loaded this specific font
+		if (this.loadedFonts.has(fontName)) {
+			console.log(`Font ${fontName} already loaded`);
+			return Promise.resolve();
+		}
+
+		// Font file mapping
+		const fontFileMapping = {
+			"Huiwen-HKHei": "HuiwenGangHei",
+			"Huiwen-Fangsong": "HuiwenFangSong",
+			"FZSongKeBenXiuKaiS-R-GB": "FangzhengSongJianKe",
+			"Bookerly": "Bookerly-Regular"
+		};
+
+		const fileName = fontFileMapping[fontName] || fontName;
+
+		// Try different font formats
+		const fontSources = [
+			`url(assets/font/${fileName}.ttf)`
+		].join(', ');
+
+		// Create font face and load it dynamically
+		console.log(`Loading font: ${fontName}, ${fontSources}`);
+		const fontFace = new FontFace(fontName, fontSources);
+
+		return fontFace.load().then((loadedFont) => {
+			document.fonts.add(loadedFont);
+			this.loadedFonts.add(fontName);
+			console.log(`Font ${fontName} loaded successfully`);
+			return loadedFont;
+		}).catch((error) => {
+			console.warn(`Failed to load font ${fontName}:`, error);
+			// Don't add to loadedFonts if loading failed
+			throw error;
+		});
+	}
+
+	applyUITheme(theme) {
+		document.body.className = theme === "dark" ? "dark-theme" :
+								  theme === "eyecare" ? "eyecare-theme" : "";
+	}
+
+	applyStyles() {
+		if (!this.rendition) return;
+
+		const theme = this.settings.theme;
+		if (!theme || (theme !== "dark" && theme !== "eyecare" && theme !== "light")) {
+			console.warn(`Invalid theme: ${theme}. Using default light theme.`);
+			this.settings.theme = "light";
+		}
+
 		// Remove all theme classes first
 		document.body.classList.remove("dark-theme", "eyecare-theme");
 
@@ -206,44 +270,58 @@ export class Reader {
 			document.body.classList.add("eyecare-theme");
 		}
 
-		// Apply theme to the epub content (only if rendition is available)
-		if (this.rendition) {
+		const fontName = this.settings.styles.font === "default" ? "" : this.settings.styles.font;
+
+		// Load font first if needed, then apply styles
+		const applyStylesWithFont = (actualFontName) => {
 			let contentStyles = {};
+
+			// Helper function to add font-family only if font is specified
+			const addFontFamily = (styles, fontName) => {
+				if (fontName) {
+					styles["font-family"] = fontName;
+				}
+				return styles;
+			};
 
 			if (theme === "dark") {
 				contentStyles = {
-					"body": {
+					"body": addFontFamily({
 						"background": "#1a1a1a",
-						"color": "#e0e0e0 !important"
-					},
-					"p": {
-						"color": "#e0e0e0 !important"
-					},
-					"h1, h2, h3, h4, h5, h6": {
-						"color": "#e0e0e0 !important",
-					},
-					"a": {
-						"color": "#4a9eff !important"
-					},
+						"color": "#e0e0e0"
+					}, actualFontName),
+					"p": addFontFamily({
+						"color": "#e0e0e0"
+					}, actualFontName),
+					"h1, h2, h3, h4, h5, h6": addFontFamily({
+						"color": "#e0e0e0"
+					}, actualFontName),
+					"div": addFontFamily({}, actualFontName),
+					"span": addFontFamily({}, actualFontName),
+					"a": addFontFamily({
+						"color": "#4a9eff"
+					}, actualFontName),
 					"a:visited": {
-						"color": "#b19cd9 !important"
+						"color": "#b19cd9"
 					}
 				};
 			} else if (theme === "eyecare") {
 				contentStyles = {
-					"body": {
+					"body": addFontFamily({
 						"background": "#f0f4e8",
 						"color": "#2d4a2d"
-					},
-					"p": {
+					}, actualFontName),
+					"p": addFontFamily({
 						"color": "#2d4a2d"
-					},
-					"h1, h2, h3, h4, h5, h6": {
+					}, actualFontName),
+					"h1, h2, h3, h4, h5, h6": addFontFamily({
 						"color": "#2d4a2d"
-					},
-					"a": {
+					}, actualFontName),
+					"div": addFontFamily({}, actualFontName),
+					"span": addFontFamily({}, actualFontName),
+					"a": addFontFamily({
 						"color": "#4a7c4a"
-					},
+					}, actualFontName),
 					"a:visited": {
 						"color": "#6b8e6b"
 					}
@@ -251,26 +329,40 @@ export class Reader {
 			} else {
 				// Light theme
 				contentStyles = {
-					"body": {
+					"body": addFontFamily({
 						"background": "#fff",
 						"color": "#000"
-					},
-					"p": {
+					}, actualFontName),
+					"p": addFontFamily({
 						"color": "#000"
-					},
-					"h1, h2, h3, h4, h5, h6": {
+					}, actualFontName),
+					"h1, h2, h3, h4, h5, h6": addFontFamily({
 						"color": "#000"
-					},
-					"a": {
+					}, actualFontName),
+					"div": addFontFamily({}, actualFontName),
+					"span": addFontFamily({}, actualFontName),
+					"a": addFontFamily({
 						"color": "#1a73e8"
-					},
+					}, actualFontName),
 					"a:visited": {
 						"color": "#8e24aa"
 					}
 				};
 			}
-
 			this.rendition.themes.default(contentStyles);
+			console.log(`Applied styles with theme: ${theme}, font: ${actualFontName || "default"}`);
+		};
+
+		// If font is specified, load it first
+		if (fontName) {
+			this.loadFont(fontName).then(() => {
+				applyStylesWithFont(fontName);
+			}).catch(() => {
+				console.log(`Font loading failed, using default font`);
+				applyStylesWithFont("");
+			});
+		} else {
+			applyStylesWithFont("");
 		}
 	}
 
