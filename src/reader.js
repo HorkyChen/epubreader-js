@@ -243,7 +243,9 @@ export class Reader {
 			// Helper function to add font-family only if font is specified
 			const addFontFamily = (styles, fontName) => {
 				if (fontName) {
-					styles["font-family"] = fontName;
+					styles["font-family"] = fontName + " !important";
+				} else {
+					styles["font-family"] = "Bookerly !important";
 				}
 				return styles;
 			};
