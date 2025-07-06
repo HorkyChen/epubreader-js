@@ -206,6 +206,13 @@ export class Reader {
 
 	/* ------------------------------- Common ------------------------------- */
 
+	// Helper method to build font URL with configurable assets path
+	buildFontUrl(fileName) {
+		const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+		const assetsPath = this.settings.assetsPath ? this.settings.assetsPath + '/' : '';
+		return `${baseUrl}${assetsPath}assets/font/${fileName}`;
+	}
+
 	loadFont(fontName) {
 		if (!fontName || fontName === "default") {
 			return Promise.resolve();
@@ -232,10 +239,9 @@ export class Reader {
 
 		const fileName = fontFileMapping[fontName] || fontName;
 
-		// Try different font formats
-		const fontSources = [
-			`url(assets/font/${fileName}.ttf)`
-		].join(', ');
+		// Try different font formats using configurable assets path
+		const fontUrl = this.buildFontUrl(`${fileName}.ttf`);
+		const fontSources = `url(${fontUrl})`;
 
 		// Create font face and load it dynamically
 		console.log(`Loading font: ${fontName}, ${fontSources}`);
@@ -379,9 +385,8 @@ export class Reader {
 		};
 
 		const fileName = fontFileMapping[fontName] || fontName;
-		// Use absolute URL to ensure font can be loaded from iframe
-		const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
-		const fontUrl = `${baseUrl}assets/font/${fileName}.ttf`;
+		// Use configurable assets path for font URL
+		const fontUrl = this.buildFontUrl(`${fileName}.ttf`);
 
 		// Get all iframe elements in the rendition
 		const iframes = document.querySelectorAll('#viewer iframe');
@@ -467,6 +472,7 @@ export class Reader {
 		this.entryKey = md5(bookPath).toString();
 		this.settings = {
 			bookPath: bookPath,
+			assetsPath: "",
 			arrows: this.isMobile ? "none" : "content", // none | content | toolbar
 			manager: this.isMobile ? "continuous" : "default",
 			restore: true,
