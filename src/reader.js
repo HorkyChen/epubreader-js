@@ -131,7 +131,17 @@ export class Reader {
 			const fontName = this.settings.styles.font === "default" ? "" : this.settings.styles.font;
 			if (fontName) {
 				setTimeout(() => {
-					this.injectFontIntoIframe(fontName);
+					this.injectFontWithRetry(fontName);
+				}, 200);
+			}
+		});
+
+		this.rendition.on("rendered", () => {
+			// Re-inject font when content is rendered
+			const fontName = this.settings.styles.font === "default" ? "" : this.settings.styles.font;
+			if (fontName) {
+				setTimeout(() => {
+					this.injectFontWithRetry(fontName);
 				}, 100);
 			}
 		});
@@ -211,52 +221,6 @@ export class Reader {
 		const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
 		const assetsPath = this.settings.assetsPath ? this.settings.assetsPath + '/' : '';
 		return `${baseUrl}${assetsPath}assets/font/${fileName}`;
-	}
-
-	loadFont(fontName) {
-		if (!fontName || fontName === "default") {
-			return Promise.resolve();
-		}
-
-		// Keep track of loaded fonts
-		if (!this.loadedFonts) {
-			this.loadedFonts = new Set();
-		}
-
-		// Check if we have already loaded this specific font
-		if (this.loadedFonts.has(fontName)) {
-			console.log(`Font ${fontName} already loaded`);
-			return Promise.resolve();
-		}
-
-		// Font file mapping
-		const fontFileMapping = {
-			"Huiwen-HKHei": "HuiwenGangHei",
-			"Huiwen-Fangsong": "HuiwenFangSong",
-			"FZSongKeBenXiuKaiS-R-GB": "FangzhengSongJianKe",
-			"Bookerly": "Bookerly-Regular"
-		};
-
-		const fileName = fontFileMapping[fontName] || fontName;
-
-		// Try different font formats using configurable assets path
-		const fontUrl = this.buildFontUrl(`${fileName}.ttf`);
-		const fontSources = `url(${fontUrl})`;
-
-		// Create font face and load it dynamically
-		console.log(`Loading font: ${fontName}, ${fontSources}`);
-		const fontFace = new FontFace(fontName, fontSources);
-
-		return fontFace.load().then((loadedFont) => {
-			document.fonts.add(loadedFont);
-			this.loadedFonts.add(fontName);
-			console.log(`Font ${fontName} loaded successfully`);
-			return loadedFont;
-		}).catch((error) => {
-			console.warn(`Failed to load font ${fontName}:`, error);
-			// Don't add to loadedFonts if loading failed
-			throw error;
-		});
 	}
 
 	applyUITheme(theme) {
@@ -352,81 +316,84 @@ export class Reader {
 
 			this.rendition.themes.default(contentStyles);
 
-			// Inject font into epub iframe if font is specified
 			if (actualFontName) {
-				this.injectFontIntoIframe(actualFontName);
+				this.injectFontWithRetry(actualFontName);
 			}
 
 			console.log(`Applied styles with theme: ${theme}, font: ${actualFontName || "default"}`);
 		};
 
-		// If font is specified, load it first
 		if (fontName) {
-			this.loadFont(fontName).then(() => {
-				applyStylesWithFont(fontName);
-			}).catch(() => {
-				console.log(`Font loading failed, using default font`);
-				applyStylesWithFont("");
-			});
+			applyStylesWithFont(fontName);
 		} else {
 			applyStylesWithFont("");
 		}
 	}
 
-	// Method to inject font into epub iframe
-	injectFontIntoIframe(fontName) {
-		if (!this.rendition) return;
+	// Enhanced method to inject font with better timing
+	injectFontWithRetry(fontName, maxRetries = 3) {
+		if (!fontName || fontName === "default") return;
 
-		const fontFileMapping = {
-			"Huiwen-HKHei": "HuiwenGangHei",
-			"Huiwen-Fangsong": "HuiwenFangSong",
-			"FZSongKeBenXiuKaiS-R-GB": "FangzhengSongJianKe",
-			"Bookerly": "Bookerly-Regular"
+		let attempts = 0;
+		const tryInject = () => {
+			attempts++;
+			const iframes = document.querySelectorAll('#viewer iframe');
+
+			if (iframes.length === 0 && attempts < maxRetries) {
+				console.log(`No iframes found, retrying... (${attempts}/${maxRetries})`);
+				setTimeout(tryInject, 200);
+				return;
+			}
+
+			let injectedCount = 0;
+			iframes.forEach(iframe => {
+				try {
+					const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+					if (iframeDoc && iframeDoc.readyState === 'complete') {
+						// Create or update the font style element
+						let fontStyleElement = iframeDoc.getElementById('injected-font-style');
+						if (!fontStyleElement) {
+							fontStyleElement = iframeDoc.createElement('style');
+							fontStyleElement.id = 'injected-font-style';
+							iframeDoc.head.appendChild(fontStyleElement);
+						}
+
+						const fontFileMapping = {
+							"Huiwen-HKHei": "HuiwenGangHei",
+							"Huiwen-Fangsong": "HuiwenFangSong",
+							"FZSongKeBenXiuKaiS-R-GB": "FangzhengSongJianKe",
+							"Bookerly": "Bookerly-Regular"
+						};
+
+						const fileName = fontFileMapping[fontName] || fontName;
+						const fontUrl = this.buildFontUrl(`${fileName}.ttf`);
+
+						// Inject font-face CSS
+						const fontFaceCSS = `
+							@font-face {
+								font-family: '${fontName}';
+								src: url('${fontUrl}') format('truetype');
+								font-weight: normal;
+								font-style: normal;
+							}
+						`;
+
+						fontStyleElement.textContent = fontFaceCSS;
+						injectedCount++;
+						console.log(`Injected font ${fontName} into iframe ${injectedCount}`);
+					}
+				} catch (error) {
+					console.warn(`Failed to inject font into iframe:`, error);
+				}
+			});
+
+			if (injectedCount === 0 && attempts < maxRetries) {
+				console.log(`Font injection failed, retrying... (${attempts}/${maxRetries})`);
+				setTimeout(tryInject, 200);
+			}
 		};
 
-		const fileName = fontFileMapping[fontName] || fontName;
-		// Use configurable assets path for font URL
-		const fontUrl = this.buildFontUrl(`${fileName}.ttf`);
-
-		// Get all iframe elements in the rendition
-		const iframes = document.querySelectorAll('#viewer iframe');
-
-		iframes.forEach(iframe => {
-			try {
-				const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-				if (iframeDoc) {
-					// Create or update the font style element
-					let fontStyleElement = iframeDoc.getElementById('injected-font-style');
-					if (!fontStyleElement) {
-						fontStyleElement = iframeDoc.createElement('style');
-						fontStyleElement.id = 'injected-font-style';
-						iframeDoc.head.appendChild(fontStyleElement);
-					}
-
-					// Inject font-face CSS
-					const fontFaceCSS = `
-						@font-face {
-							font-family: '${fontName}';
-							src: url('${fontUrl}') format('truetype');
-							font-weight: normal;
-							font-style: normal;
-						}
-					`;
-
-					fontStyleElement.textContent = fontFaceCSS;
-					console.log(`Injected font ${fontName} into iframe`);
-				}
-			} catch (error) {
-				console.warn(`Failed to inject font into iframe:`, error);
-			}
-		});
-
-		// Also listen for new content being rendered
-		this.rendition.on('rendered', () => {
-			setTimeout(() => {
-				this.injectFontIntoIframe(fontName);
-			}, 100);
-		});
+		tryInject();
 	}
 
 	navItemFromCfi(cfi) {
