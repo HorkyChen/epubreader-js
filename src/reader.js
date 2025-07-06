@@ -127,6 +127,13 @@ export class Reader {
 		this.rendition.on("relocated", (location) => {
 			this.setLocation(location.start.cfi);
 			this.emit("relocated", location);
+			// Re-inject font when page changes
+			const fontName = this.settings.styles.font === "default" ? "" : this.settings.styles.font;
+			if (fontName) {
+				setTimeout(() => {
+					this.injectFontIntoIframe(fontName);
+				}, 100);
+			}
 		});
 
 		this.rendition.on("keydown", this.keyboardHandler.bind(this));
@@ -255,22 +262,9 @@ export class Reader {
 		if (!this.rendition) return;
 
 		const theme = this.settings.theme;
-		if (!theme || (theme !== "dark" && theme !== "eyecare" && theme !== "light")) {
-			console.warn(`Invalid theme: ${theme}. Using default light theme.`);
-			this.settings.theme = "light";
-		}
-
-		// Remove all theme classes first
-		document.body.classList.remove("dark-theme", "eyecare-theme");
-
-		// Apply theme to the UI
-		if (theme === "dark") {
-			document.body.classList.add("dark-theme");
-		} else if (theme === "eyecare") {
-			document.body.classList.add("eyecare-theme");
-		}
-
 		const fontName = this.settings.styles.font === "default" ? "" : this.settings.styles.font;
+
+		console.log(`Applying styles - Theme: ${theme}, Font: ${fontName || "default"}`);
 
 		// Load font first if needed, then apply styles
 		const applyStylesWithFont = (actualFontName) => {
@@ -288,21 +282,21 @@ export class Reader {
 				contentStyles = {
 					"body": addFontFamily({
 						"background": "#1a1a1a",
-						"color": "#e0e0e0"
+						"color": "#e0e0e0 !important"
 					}, actualFontName),
 					"p": addFontFamily({
-						"color": "#e0e0e0"
+						"color": "#e0e0e0 !important"
 					}, actualFontName),
 					"h1, h2, h3, h4, h5, h6": addFontFamily({
-						"color": "#e0e0e0"
+						"color": "#e0e0e0 !important"
 					}, actualFontName),
 					"div": addFontFamily({}, actualFontName),
 					"span": addFontFamily({}, actualFontName),
 					"a": addFontFamily({
-						"color": "#4a9eff"
+						"color": "#4a9eff !important"
 					}, actualFontName),
 					"a:visited": {
-						"color": "#b19cd9"
+						"color": "#b19cd9 !important"
 					}
 				};
 			} else if (theme === "eyecare") {
@@ -349,7 +343,14 @@ export class Reader {
 					}
 				};
 			}
+
 			this.rendition.themes.default(contentStyles);
+
+			// Inject font into epub iframe if font is specified
+			if (actualFontName) {
+				this.injectFontIntoIframe(actualFontName);
+			}
+
 			console.log(`Applied styles with theme: ${theme}, font: ${actualFontName || "default"}`);
 		};
 
@@ -364,6 +365,63 @@ export class Reader {
 		} else {
 			applyStylesWithFont("");
 		}
+	}
+
+	// Method to inject font into epub iframe
+	injectFontIntoIframe(fontName) {
+		if (!this.rendition) return;
+
+		const fontFileMapping = {
+			"Huiwen-HKHei": "HuiwenGangHei",
+			"Huiwen-Fangsong": "HuiwenFangSong",
+			"FZSongKeBenXiuKaiS-R-GB": "FangzhengSongJianKe",
+			"Bookerly": "Bookerly-Regular"
+		};
+
+		const fileName = fontFileMapping[fontName] || fontName;
+		// Use absolute URL to ensure font can be loaded from iframe
+		const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+		const fontUrl = `${baseUrl}assets/font/${fileName}.ttf`;
+
+		// Get all iframe elements in the rendition
+		const iframes = document.querySelectorAll('#viewer iframe');
+
+		iframes.forEach(iframe => {
+			try {
+				const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+				if (iframeDoc) {
+					// Create or update the font style element
+					let fontStyleElement = iframeDoc.getElementById('injected-font-style');
+					if (!fontStyleElement) {
+						fontStyleElement = iframeDoc.createElement('style');
+						fontStyleElement.id = 'injected-font-style';
+						iframeDoc.head.appendChild(fontStyleElement);
+					}
+
+					// Inject font-face CSS
+					const fontFaceCSS = `
+						@font-face {
+							font-family: '${fontName}';
+							src: url('${fontUrl}') format('truetype');
+							font-weight: normal;
+							font-style: normal;
+						}
+					`;
+
+					fontStyleElement.textContent = fontFaceCSS;
+					console.log(`Injected font ${fontName} into iframe`);
+				}
+			} catch (error) {
+				console.warn(`Failed to inject font into iframe:`, error);
+			}
+		});
+
+		// Also listen for new content being rendered
+		this.rendition.on('rendered', () => {
+			setTimeout(() => {
+				this.injectFontIntoIframe(fontName);
+			}, 100);
+		});
 	}
 
 	navItemFromCfi(cfi) {
