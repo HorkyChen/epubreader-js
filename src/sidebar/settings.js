@@ -52,6 +52,7 @@ export class SettingsPanel extends UIPanel {
 		const fontRow = new UIRow();
 		const font = new UISelect().setOptions({
 			"default": strings.get("sidebar/settings/font/default"),
+			"FZSongKeBenXiuKaiS-R-GB": "方正宋刻本秀楷",
 			"Huiwen-HKHei": "汇文港黑",
 			"Huiwen-Fangsong": "汇文仿宋体",
 			"Bookerly": "Bookerly",
