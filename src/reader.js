@@ -273,21 +273,21 @@ export class Reader {
 				contentStyles = {
 					"body": addFontFamily({
 						"background": "#f0f4e8",
-						"color": "#2d4a2d"
+						"color": "#2d4a2d !important"
 					}, actualFontName),
 					"p": addFontFamily({
-						"color": "#2d4a2d"
+						"color": "#2d4a2d !important"
 					}, actualFontName),
 					"h1, h2, h3, h4, h5, h6": addFontFamily({
-						"color": "#2d4a2d"
+						"color": "#2d4a2d !important"
 					}, actualFontName),
 					"div": addFontFamily({}, actualFontName),
 					"span": addFontFamily({}, actualFontName),
 					"a": addFontFamily({
-						"color": "#4a7c4a"
+						"color": "#4a7c4a !important"
 					}, actualFontName),
 					"a:visited": {
-						"color": "#6b8e6b"
+						"color": "#6b8e6b !important"
 					}
 				};
 			} else {
@@ -295,21 +295,21 @@ export class Reader {
 				contentStyles = {
 					"body": addFontFamily({
 						"background": "#fff",
-						"color": "#000"
+						"color": "#000 !important"
 					}, actualFontName),
 					"p": addFontFamily({
-						"color": "#000"
+						"color": "#000 !important"
 					}, actualFontName),
 					"h1, h2, h3, h4, h5, h6": addFontFamily({
-						"color": "#000"
+						"color": "#000 !important"
 					}, actualFontName),
 					"div": addFontFamily({}, actualFontName),
 					"span": addFontFamily({}, actualFontName),
 					"a": addFontFamily({
-						"color": "#1a73e8"
+						"color": "#1a73e8 !important"
 					}, actualFontName),
 					"a:visited": {
-						"color": "#8e24aa"
+						"color": "#8e24aa !important"
 					}
 				};
 			}
